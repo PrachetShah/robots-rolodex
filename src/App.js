@@ -1,6 +1,6 @@
 import { Component } from "react";
 
-import logo from "./logo.svg";
+// import logo from "./logo.svg";
 import "./App.css";
 
 class App extends Component {
@@ -8,6 +8,7 @@ class App extends Component {
     super();
     this.state = {
       monsters: [],
+      searchField: "",
     };
     console.log("Constructor");
   }
@@ -31,6 +32,11 @@ class App extends Component {
 
   render() {
     console.log("Render");
+
+    const filteredArr = this.state.monsters.filter((monster) => {
+      return monster.name.toLowerCase().includes(this.state.searchField);
+    });
+
     return (
       <div className="App">
         <input
@@ -39,17 +45,12 @@ class App extends Component {
           type="search"
           onChange={(event) => {
             console.log(event.target.value);
-            const searchStr = event.target.value.toLowerCase();
-
-            const filteredArr = this.state.monsters.filter((monster) => {
-              return monster.name.toLowerCase().includes(searchStr);
-            });
-
+            const searchField = event.target.value.toLowerCase();
             // console.log(filteredArr);
-            this.setState({ monsters: filteredArr });
+            this.setState({ searchField });
           }}
         />
-        {this.state.monsters.map((monster) => {
+        {filteredArr.map((monster) => {
           return <h1 key={monster.id}>{monster.name}</h1>;
         })}
       </div>
