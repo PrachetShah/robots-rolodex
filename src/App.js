@@ -2,6 +2,8 @@ import { Component } from "react";
 
 // import logo from "./logo.svg";
 import "./App.css";
+import CardList from "./components/card-list/card-list.component";
+import SearchBox from "./components/search-box/search-box.component";
 
 class App extends Component {
   constructor() {
@@ -10,7 +12,6 @@ class App extends Component {
       monsters: [],
       searchField: "",
     };
-    console.log("Constructor");
   }
 
   // Like UseEffect
@@ -18,41 +19,35 @@ class App extends Component {
     fetch("https://jsonplaceholder.typicode.com/users")
       .then((response) => response.json())
       .then((users) =>
-        this.setState(
-          () => {
-            return { monsters: users };
-          },
-          () => {
-            console.log(this.state);
-          }
-        )
+        this.setState(() => {
+          return { monsters: users };
+        })
       );
-    console.log("Mount Component");
   }
 
-  render() {
-    console.log("Render");
+  handleChange = (event) => {
+    console.log(event.target.value);
+    const searchField = event.target.value.toLowerCase();
+    // console.log(filteredArr);
+    this.setState({ searchField });
+  };
 
-    const filteredArr = this.state.monsters.filter((monster) => {
-      return monster.name.toLowerCase().includes(this.state.searchField);
+  render() {
+    const { monsters, searchField } = this.state;
+
+    const filteredArr = monsters.filter((monster) => {
+      return monster.name.toLowerCase().includes(searchField);
     });
 
     return (
       <div className="App">
-        <input
-          className="search-box"
+        <h1 className="app-title">Robots Rolodex</h1>
+        <SearchBox
+          onChangeHandler={this.handleChange}
           placeholder="Search Monsters"
-          type="search"
-          onChange={(event) => {
-            console.log(event.target.value);
-            const searchField = event.target.value.toLowerCase();
-            // console.log(filteredArr);
-            this.setState({ searchField });
-          }}
+          className="monster-search-box"
         />
-        {filteredArr.map((monster) => {
-          return <h1 key={monster.id}>{monster.name}</h1>;
-        })}
+        <CardList monsters={filteredArr} />
       </div>
     );
   }
